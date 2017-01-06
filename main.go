@@ -36,17 +36,11 @@ func main() {
 		_, err = prof.DisableProfiling()
 		if err != nil {
 			fmt.Println("Profiling could not be disabled.. Manual intervention may be wise.")
-			fmt.Println(err)
-		} else {
-			fmt.Println("Profiler is done!")
-			result, err := prof.Results()
-
-			if err != nil {
-				fmt.Println("Error fetching results", err)
-			} else {
-				fmt.Println("results\n", result)
-			}
+			panic(err)
 		}
+
+		prof.UploadResultsToS3()
+
 	}
 }
 
