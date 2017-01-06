@@ -6,7 +6,7 @@ import "C"
 import (
 	"encoding/json"
 	"errors"
-	"github.com/eawsy/aws-lambda-go-core/service/lambda/runtime"
+	"github.com/eawsy/aws-lambda-go/service/lambda/runtime"
 	"github.com/thomasv314/mon-go-lambda-profiler/profiler"
 	"log"
 	"os"
@@ -26,7 +26,13 @@ var (
 	profileDurationSecs int
 )
 
-func Handle(evt json.RawMessage, ctx *runtime.Context) (interface{}, error) {
+func init() {
+	runtime.HandleFunc(handle)
+}
+
+func main() {}
+
+func handle(evt json.RawMessage, ctx *runtime.Context) (interface{}, error) {
 	setProfileConfig()
 	err := setRequiredEnvVars()
 	if err != nil {
