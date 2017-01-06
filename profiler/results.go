@@ -3,11 +3,11 @@ package profiler
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/thomasv314/mongo-tools/common/bsonutil"
+	"log"
 )
 
 func (p Profiler) ResultsAsJSON() (jsonBytes []byte, err error) {
@@ -36,14 +36,14 @@ func (p Profiler) UploadResultsToS3() {
 	payload, err := p.ResultsAsJSON()
 
 	if err != nil {
-		fmt.Println("Failed to get results..", err)
+		log.Println("Failed to get results..", err)
 		return
 	}
 
 	sess, err := session.NewSession()
 
 	if err != nil {
-		fmt.Println("failed to create session,", err)
+		log.Println("failed to create session,", err)
 		return
 	}
 
@@ -60,9 +60,9 @@ func (p Profiler) UploadResultsToS3() {
 	if err != nil {
 		// Print the error, cast err to awserr.Error to get the Code and
 		// Message from an error.
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
 
-	fmt.Println("Uploaded to S3")
+	log.Println("Uploaded to S3")
 }

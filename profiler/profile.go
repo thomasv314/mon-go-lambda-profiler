@@ -1,9 +1,9 @@
 package profiler
 
 import (
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 type Profiler struct {
@@ -15,12 +15,12 @@ type Profiler struct {
 type Result struct{}
 
 func Create(dbUrl, dbName string, maxQueryTimeMs int) Profiler {
-	fmt.Println(dbUrl, dbName, maxQueryTimeMs)
+	log.Println(dbUrl, dbName, maxQueryTimeMs)
 
 	session, err := mgo.Dial(dbUrl)
 
 	if err != nil {
-		fmt.Println("Session open Error:", err)
+		log.Println("Session open Error:", err)
 		panic(err)
 	}
 
@@ -51,5 +51,5 @@ func (p Profiler) EnableProfiling() (result Result, err error) {
 
 func (p Profiler) Close() {
 	p.Session.Close()
-	fmt.Println("Closed Mongo Connection.")
+	log.Println("Closed Mongo Connection.")
 }

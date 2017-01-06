@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/thomasv314/mon-go-lambda-profiler/profiler"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -28,19 +28,20 @@ func main() {
 	if err != nil {
 		handleErr(err)
 	} else {
-		fmt.Println("Profiling enabled.. Waiting", profileDurationSecsStr, "seconds.")
+		log.Println("Profiling enabled.. Waiting", profileDurationSecsStr, "seconds.")
 	}
 
 	select {
 	case <-time.After(time.Duration(profileDurationSecs) * time.Second):
 		_, err = prof.DisableProfiling()
 		if err != nil {
-			fmt.Println("Profiling could not be disabled.. Manual intervention may be wise.")
+			log.Println("Profiling could not be disabled.. Manual intervention may be wise.")
 			panic(err)
 		}
 
-		prof.UploadResultsToS3()
+		log.Println("Profiling disabled.")
 
+		prof.UploadResultsToS3()
 	}
 }
 
