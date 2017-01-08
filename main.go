@@ -41,7 +41,12 @@ func main() {
 
 		log.Println("Profiling disabled.")
 
-		prof.UploadResultsToS3()
+		err := prof.ProcessResults()
+
+		if err != nil {
+			log.Println("Error processing results:", err)
+			panic(err)
+		}
 	}
 }
 
