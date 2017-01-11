@@ -9,37 +9,37 @@ import (
 func (p Profiler) filterResults(results []interface{}) (filteredResults []interface{}, err error) {
 	filteredResults = make([]interface{}, len(results))
 
-	filterSingleResult(results[0])
-	/*	for i := range results {
-			if reflect.TypeOf(results[i]).String() != "bson.M" {
-				panic("attempted to filter result that was not of bson.M type")
-			}
-			filteredResults[i] = filterSingleResult(results[i])
+	for i := range results {
+		bsonResult := results[i].(bson.M)
+
+		if bsonResult["query"] != nil {
+			bsonQuery := bsonResult["query"].(bson.M)
+			bsonResult["query"] = filterValuesFromBSON(bsonQuery)
 		}
-	*/
+
+		log.Println(i, bsonResult)
+
+		filteredResults[i] = bsonResult
+	}
+
 	return
 }
 
-func filterSingleResult(result interface{}) interface{} {
-	bsonResult := result.(bson.M)
-
-	for key, val := range bsonResult {
-		if val != nil {
-			valueType := reflect.TypeOf(val)
-
-			if valueType == nil {
-				bsonResult[key] = nil
-			} else if valueType.String() == "bson.M" {
-				bsonResult[key] = filterSingleResult(val)
-			} else {
-				bsonResult[key] = reflect.Zero(valueType)
-			}
-			log.Println("["+reflect.TypeOf(val).String()+"] "+key, ":", val)
-		} else {
-			log.Println("[nil] "+key, ":", val)
-			bsonResult[key] = ""
-		}
+func filterValuesFromBSON(doc bson.M) bson.M {
+	if doc == nil {
+		return doc
 	}
 
-	return bsonResult
+	for key, val := range doc {
+		if val != nil {
+			valType := reflect.TypeOf(doc[key]).String()
+			switch valType {
+			case "bson.M":
+				doc[key] = filterValuesFromBSON(val.(bson.M))
+			default:
+				doc[key] = nil
+			}
+		}
+	}
+	return doc
 }
