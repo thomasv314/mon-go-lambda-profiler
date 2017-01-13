@@ -33,12 +33,6 @@ func Create(dbUrl, dbName string, maxQueryTimeMs int) Profiler {
 	}
 }
 
-func (p Profiler) Results() (result []interface{}, err error) {
-	result = make([]interface{}, 0)
-	err = p.Db.C("system.profile").Find(nil).All(&result)
-	return
-}
-
 func (p Profiler) DisableProfiling() (result Result, err error) {
 	err = p.Db.Run(bson.D{{"profile", 0}}, &result)
 	return
